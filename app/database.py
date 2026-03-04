@@ -4,9 +4,9 @@ from sqlalchemy.orm import sessionmaker
 import psycopg
 from psycopg.rows import dict_row
 import time
+from .config import settings
 
-
-SQLALCHMEY_DATABASE_URL = "postgresql+psycopg://postgres:ARash1990@localhost:5432/Fastapi"
+SQLALCHMEY_DATABASE_URL = f"postgresql+psycopg://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}"
 
 engine = create_engine(SQLALCHMEY_DATABASE_URL)
 

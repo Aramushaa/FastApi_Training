@@ -1,37 +1,12 @@
-from sqlalchemy.util import deprecated
-from fastapi import FastAPI,Response,status,HTTPException,Depends
-from fastapi.params import Body
-from random import randrange
-from .database import engine,get_db
-from . import models,schemas,utils
-from sqlalchemy.orm import Session
-from typing import List
+from fastapi import FastAPI
+from .database import engine
+from . import models
 from .routers import post,user,auth
-
-
+from .config import settings
 
 models.Base.metadata.create_all(bind=engine)
 
-
-
-
 app=FastAPI()
-
-
-
-
-my_posts=[{"title":"my first post","content":"today learning 1","published":True,"rating":5,"id":1},{"title":"my second post","content":"today learning 2","published":True,"rating":5,"id":2}]
-
-def find_post(id):
-    for post in my_posts:
-        if post['id']==id:
-            return post
-
-def index_of_post(id):
-    for i,p in enumerate(my_posts):
-        if p['id']==id:
-            return i
-
 
 app.include_router(post.router)
 app.include_router(user.router)
@@ -40,5 +15,3 @@ app.include_router(auth.router)
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-
