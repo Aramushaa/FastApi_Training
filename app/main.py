@@ -2,9 +2,6 @@ from sqlalchemy.util import deprecated
 from fastapi import FastAPI,Response,status,HTTPException,Depends
 from fastapi.params import Body
 from random import randrange
-import psycopg
-from psycopg.rows import dict_row
-import time
 from .database import engine,get_db
 from . import models,schemas,utils
 from sqlalchemy.orm import Session
@@ -21,17 +18,6 @@ models.Base.metadata.create_all(bind=engine)
 app=FastAPI()
 
 
-
-while True:
-    try:
-        conn = psycopg.connect(host="localhost", dbname="Fastapi", user="postgres", password="ARash1990",row_factory=dict_row)
-        cursor = conn.cursor()
-        print("Database connection successful")
-        break
-    except Exception as e:
-        print("Database connection failed")
-        print("error: ",e)
-        time.sleep(2)
 
 
 my_posts=[{"title":"my first post","content":"today learning 1","published":True,"rating":5,"id":1},{"title":"my second post","content":"today learning 2","published":True,"rating":5,"id":2}]
