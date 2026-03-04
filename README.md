@@ -1,38 +1,107 @@
-# FastAPI Training Project
+# FastAPI Social Media API (Learning Project)
 
-This repository contains a training project built to learn and demonstrate the use of **FastAPI** for building robust REST APIs.
+This repository is my hands-on practice project while following a long-form FastAPI course.
 
-## 🚀 Technologies & Concepts Covered
+The goal is to build a complete social-media-style backend API where users can:
+- register and authenticate
+- create/read/update/delete posts
+- (next) like posts
+- (next) add testing, deployment, Docker, and CI/CD
 
-This project serves as a hands-on implementation of the following technologies and concepts:
+## Course Context
 
-- **FastAPI**: A modern, fast (high-performance), web framework for building APIs with Python.
-- **PostgreSQL**: An advanced, enterprise-class, and open-source relational database system used as the primary data store.
-- **SQLAlchemy**: The Python SQL toolkit and Object Relational Mapper that gives application developers the full power and flexibility of SQL.
-- **Docker**: Used for containerizing the application and database, ensuring consistency across different development and deployment environments.
-- **CI/CD**: Continuous Integration and Continuous Deployment pipelines implemented to automate testing and deployment processes.
-- **Pydantic**: Used extensively for data validation, serialization, and settings management via Python type annotations.
-- **Modular Routing**: Structuring the API using FastAPI routers (e.g., for Users and Posts) to keep code organized and maintainable.
+I am building this project based on a FastAPI course focused on:
+- API design fundamentals (routes, schemas, validation, serialization/deserialization)
+- SQL fundamentals with PostgreSQL
+- database integration with raw SQL and SQLAlchemy ORM
+- authentication and authorization
+- testing with `pytest`
+- deployment (Ubuntu + Heroku)
+- Dockerization
+- CI/CD with GitHub Actions
 
-## 📂 Project Structure
+The course is split into two videos due to YouTube length limits.
 
-- `app/`: Contains the core application code.
-  - `main.py`: The entry point for the FastAPI application, containing the main App instance and DB connections.
-  - `models.py`: SQLAlchemy database models representing tables.
-  - `schemas.py`: Pydantic schemas for handling incoming request payloads and outgoing response structures.
-  - `database.py`: Database connection configuration and session management.
-  - `routers/`: Contains specific API route handlers (`user.py`, `post.py`).
+## Current Implementation Status
 
-## ⚙️ Getting Started
+Implemented in this repository right now:
+- FastAPI app bootstrapped with modular routers
+- PostgreSQL connection configured via environment variables
+- SQLAlchemy models for `User` and `Post`
+- password hashing with `passlib`/bcrypt
+- JWT access token creation and validation
+- login endpoint using OAuth2 password flow
+- user registration and user lookup endpoints
+- protected post CRUD endpoints with owner-only access control
+- filtering/pagination on post list (`limit`, `skip`, `search`)
 
-1. Set up your Python virtual environment (`venv`) and install the required dependencies.
-2. Ensure you have a running instance of PostgreSQL. Update the connection credentials in your source code or securely via environment variables.
-3. Start the application using Uvicorn:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-4. Navigate to `http://127.0.0.1:8000/docs` in your browser to interact with the auto-generated Swagger UI documentation.
+Planned but not yet implemented in this repo:
+- likes feature
+- test suite (`pytest`)
+- Docker setup
+- deployment scripts/workflows
+- CI/CD pipeline configuration
 
-## 📝 Note
+## API Endpoints (Current)
 
-This project is intended for educational purposes to explore and train on modern Python backend web development, containerization, database management, and automated workflows.
+- `GET /` - health/welcome route
+- `POST /users/` - create user
+- `GET /users/{id}` - get user by id
+- `POST /login/` - authenticate and receive JWT token
+- `GET /posts/` - list current user's posts (`limit`, `skip`, `search`)
+- `POST /posts/` - create post (authenticated)
+- `GET /posts/{id}` - get post by id (owner only)
+- `PUT /posts/{id}` - update post (owner only)
+- `DELETE /posts/{id}` - delete post (owner only)
+
+## Project Structure
+
+- `app/main.py` - app entrypoint and router registration
+- `app/config.py` - settings loaded from `.env` via `pydantic-settings`
+- `app/database.py` - SQLAlchemy engine/session setup
+- `app/models.py` - ORM models (`User`, `Post`)
+- `app/schemas.py` - request/response schemas
+- `app/utils.py` - password hash/verify helpers
+- `app/oauth2.py` - JWT + current-user dependency
+- `app/routers/user.py` - user routes
+- `app/routers/auth.py` - auth/login routes
+- `app/routers/post.py` - post routes
+
+## Environment Variables
+
+Create a `.env` file with:
+
+```env
+database_hostname=localhost
+database_port=5432
+database_name=Fastapi
+database_username=postgres
+database_password=your_password
+secret_key=your_secret_key
+algorithm=HS256
+access_token_expire_minutes=30
+```
+
+## Run Locally
+
+1. Create and activate a virtual environment.
+2. Install dependencies:
+
+```bash
+pip install fastapi uvicorn sqlalchemy psycopg pydantic-settings passlib[bcrypt] python-jose[cryptography] email-validator python-multipart
+```
+
+3. Start the API:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+4. Open Swagger docs:
+
+- `http://127.0.0.1:8000/docs`
+
+## Notes
+
+- Database tables are currently created automatically from SQLAlchemy models on app startup (`Base.metadata.create_all(...)`).
+- This project is for learning and will continue to evolve as I progress through the course.
