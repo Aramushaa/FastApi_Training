@@ -20,7 +20,6 @@ I am building this project based on a FastAPI course focused on:
 - Dockerization
 - CI/CD with GitHub Actions
 
-The course is split into two videos due to YouTube length limits.
 
 ## Current Implementation Status
 
