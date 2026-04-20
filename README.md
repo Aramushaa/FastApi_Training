@@ -5,7 +5,7 @@ This repository is my hands-on practice project while following a long-form Fast
 The goal is to build a complete social-media-style backend API where users can:
 - register and authenticate
 - create/read/update/delete posts
-- (next) like posts
+- vote on posts
 - (next) add testing, deployment, Docker, and CI/CD
 
 ## Course Context
@@ -27,15 +27,17 @@ Implemented in this repository right now:
 - FastAPI app bootstrapped with modular routers
 - PostgreSQL connection configured via environment variables
 - SQLAlchemy models for `User` and `Post`
+- Alembic migrations for database schema management
 - password hashing with `passlib`/bcrypt
 - JWT access token creation and validation
 - login endpoint using OAuth2 password flow
 - user registration and user lookup endpoints
 - protected post CRUD endpoints with owner-only access control
+- vote endpoint for adding/removing votes from posts
 - filtering/pagination on post list (`limit`, `skip`, `search`)
+- vote counts included in post list responses
 
 Planned but not yet implemented in this repo:
-- likes feature
 - test suite (`pytest`)
 - Docker setup
 - deployment scripts/workflows
@@ -47,11 +49,12 @@ Planned but not yet implemented in this repo:
 - `POST /users/` - create user
 - `GET /users/{id}` - get user by id
 - `POST /login/` - authenticate and receive JWT token
-- `GET /posts/` - list current user's posts (`limit`, `skip`, `search`)
+- `GET /posts/` - list current user's posts with vote counts (`limit`, `skip`, `search`)
 - `POST /posts/` - create post (authenticated)
 - `GET /posts/{id}` - get post by id (owner only)
 - `PUT /posts/{id}` - update post (owner only)
 - `DELETE /posts/{id}` - delete post (owner only)
+- `POST /votes/` - add or remove a vote on a post (authenticated)
 
 ## Project Structure
 
@@ -65,6 +68,8 @@ Planned but not yet implemented in this repo:
 - `app/routers/user.py` - user routes
 - `app/routers/auth.py` - auth/login routes
 - `app/routers/post.py` - post routes
+- `app/routers/vote.py` - vote routes
+- `alembic/` - database migration history and Alembic config
 
 ## Environment Variables
 
@@ -87,20 +92,26 @@ access_token_expire_minutes=30
 2. Install dependencies:
 
 ```bash
-pip install fastapi uvicorn sqlalchemy psycopg pydantic-settings passlib[bcrypt] python-jose[cryptography] email-validator python-multipart
+pip install -r requirements.txt
 ```
 
-3. Start the API:
+3. Run database migrations:
+
+```bash
+alembic upgrade head
+```
+
+4. Start the API:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-4. Open Swagger docs:
+5. Open Swagger docs:
 
 - `http://127.0.0.1:8000/docs`
 
 ## Notes
 
-- Database tables are currently created automatically from SQLAlchemy models on app startup (`Base.metadata.create_all(...)`).
+- Database schema is managed with Alembic migrations.
 - This project is for learning and will continue to evolve as I progress through the course.
